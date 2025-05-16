@@ -1,0 +1,28 @@
+# SCHEDULER SETTINGS
+scheduler:
+  pulling:
+    time: "0 0 23 3 1 ? *"
+
+# SFTP SETTINGS
+sftp:
+  host: localhost
+  user:
+    name: foo
+  password: password
+
+# SFTP ORIGIN SETTINGS
+  origin:
+    port: "2222"
+    pulling:
+      size: "2000"
+
+# SFTP ORIGIN SETTINGS
+  remote:
+    port: "2223"
+    export:
+      path: "/upload"
+    
+# EXPORT FILENAME
+visitors:
+  export:
+    filename: test-output.txt

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="adb79c78-7687-4fb6-82d6-3c2f686acbe8" file="application.yaml" />
+	<sftp:config name="sftpOriginConfig" doc:name="SFTP Config" doc:id="061a6fe0-7c54-4c9c-b999-e02d3f9ca30e" >
+		<sftp:connection workingDir="/upload" host="${sftp.host}" port="${sftp.origin.port}" username="${sftp.user.name}" password="${sftp.password}" />
+	</sftp:config>
+	<sftp:config name="sftpRemoteConfig" doc:name="SFTP Config" doc:id="f9979636-1b3e-4f8c-89e9-59e566c20430" >
+		<sftp:connection port="${sftp.remote.port}" host="${sftp.host}" username="${sftp.user.name}" password="${sftp.password}" workingDir="/upload"/>
+	</sftp:config>
+</mule>

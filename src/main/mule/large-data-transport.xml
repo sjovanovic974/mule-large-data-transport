@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
+
+<flow name="start-csv-batch-flow">
+
+    <!-- Read the file from SFTP -->
+    <sftp:listener doc:name="On New or Updated File" doc:id="1eeadde4-f731-476d-a7b3-c63852fbdd47" config-ref="sftpOriginConfig" outputMimeType='application/csv; bodystartlinenumber=1; headerlinenumber=0; streaming=true; separator=","; header=true' moveToDirectory="/upload/archive" renameTo='#["test_" ++ now() as String {format: "yyyy-MM-dd_HH-mm-ss"}]'>
+			<non-repeatable-stream />
+			<scheduling-strategy >
+				<fixed-frequency frequency="5" timeUnit="MINUTES" />
+			</scheduling-strategy>
+			<sftp:matcher filenamePattern="*.csv"/>
+		</sftp:listener>
+    
+
+    <!-- Parse full CSV into individual records (in memory) -->
+
+    <!-- Start the batch job with parsed records -->
+		<logger level="INFO" doc:name="process starts" doc:id="73e3cf38-34f7-430d-b157-d25fc29c18e2" message="PROCESS STARTS" />
+		<foreach doc:name="For Each" doc:id="cad2e08c-f764-4968-9824-53abdfb24ae3" batchSize="${sftp.origin.pulling.size}">
+					<ee:transform doc:name="JAVA2JSON" doc:id="fa55355e-7818-4b6a-b10f-e84918227123">
+						<ee:message>
+							<ee:set-payload resource="dataweave/JAVA2JSON.dwl" />
+						</ee:message>
+					</ee:transform>
+					<ee:transform doc:name="JSON2TXT" doc:id="aa19eee3-7af4-4ddc-bbd4-e4dfc1318992">
+					<ee:message>
+						<ee:set-payload resource="dataweave/JSON2TXT.dwl" />
+					</ee:message>
+				</ee:transform>
+					<set-variable value='#[if(vars.counter == 1) "OVERWRITE" else "APPEND"]' doc:name="sftpWriteMode" doc:id="22bb99b9-cdcd-48ac-91e8-1b8310700777" variableName="sftpWriteMode" />
+					<sftp:write doc:name="sftp-remote" doc:id="deaa2051-7f34-42ae-8ae3-772de4db6475" config-ref="sftpRemoteConfig" path="#[Mule::p('sftp.remote.export.path') ++ &quot;/&quot; ++ p('visitors.export.filename')]" mode="#[vars.sftpWriteMode]" />
+				</foreach>
+		<logger level="INFO" doc:name="process ends" doc:id="e2ac26b2-5054-47de-b5c1-cbf1c1b06949" message="PROCESS ENDS" />
+
+</flow>
+
+
+</mule>
