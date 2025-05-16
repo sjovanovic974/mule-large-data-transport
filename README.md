@@ -1,6 +1,6 @@
 # 🐴 MuleSoft Chunked CSV Processor
 
-This MuleSoft flow reads large CSV files from a source SFTP server, processes them in **efficient batches of 2000 records**, transforms the content, and then writes the output to a **destination SFTP server** — all with **streaming enabled** to optimize performance and resource usage.
+This MuleSoft flow reads large CSV files from a source SFTP server, processes them in **efficient batches of 2000 records**, transforms the content, and then writes the output to a **destination SFTP server** — all with **streaming enabled** to optimize performance and resource usage and **preserving the original record order** throughout processing..
 
 ---
 
@@ -11,6 +11,7 @@ This MuleSoft flow reads large CSV files from a source SFTP server, processes th
 - 📊 **Splits records into batches** of 2000 using the `batchSize` attribute in `<foreach>`
 - 🔄 **Transforms each batch** (e.g., Java → JSON → flat text)
 - 📤 **Writes each transformed batch** to an export SFTP file using `OVERWRITE` for the first chunk, then `APPEND` for the rest
+- 🔁	**Preserve the original record order** throughout processing
 
 ---
 
@@ -39,6 +40,7 @@ With this pattern, we achieve:
 - High-performance processing of large datasets
 - Low memory usage and safe streaming
 - Minimized SFTP write overhead (from 10,000 writes to just 5–10)
+- Preserved original record order
 - Clean, scalable, production-ready integration
 
 ---
