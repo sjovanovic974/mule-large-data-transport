@@ -27,7 +27,7 @@ This MuleSoft flow reads large CSV files from a source SFTP server, processes th
 
 ## 🧩 Architecture Diagram
 
-![Diagram]([./src/main/resources/diagram.png])
+![Diagram]([src/main/resources/diagram.png])
 
 ---
 
